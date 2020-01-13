@@ -53,10 +53,50 @@ plot(dt$time)
 ```
 
 Use `ggplot` to get a better view on the data. 
-It clearly divides the data into 2 sets depending on the size of the message: set(A) < 1500 & set(B) > 1500.
+It clearly divides the data into 2 sets depending on the size of the message: set(A) < 1480 & set(B) > 1480 (not exactly 1500)
 ```{r}
 library(ggplot2)
 
 ggplot(data = dt, mapping = aes(x = size, y = time)) + geom_point() + theme_gray() 
+```
+
+So let's divide our sets
+```{r}
+# 1480 is the approximate value that splits our set into 2 subsets
+sub_dt_1 = filter(dt, size < 1480)
+sub_dt_2 = filter(dt, size >= 1480)
+```
+
+## Subset 1
+Plot the first sub set, and zoom in to have a better look at the data (only 3 rows removed)
+```{r}
+library(ggplot2)
+# we limit our set's max values to allow a better view of the data. (Removing a couple of rows should not impact the results)
+ggplot(data = sub_dt_1, mapping = aes(x = size, y = time)) +
+    geom_point() + xlim(0, 1500) + ylim(0,100)
+```
+
+### Linear regression
+
+```{r}
+ggplot(data=sub_dt_1,aes(x=size,y=time)) + theme_grey() +
+    geom_point(color="black") + geom_smooth(method='lm',color="red")+ 
+    coord_cartesian(ylim=c(0.9, 5))
+```
+Depending on the message size the minimum time seems to increase.
+
+## Subset 2
+Plot the second sub set
+```{r}
+ggplot(data = sub_dt_2, mapping = aes(x = size, y = time)) +
+    geom_point() + xlim(1500, 2050) + theme_grey()
+```
+
+### Linear Regression
+```{r}
+ggplot(data=sub_dt_2,aes(x=size,y=time)) + theme_bw() +
+    geom_point(color="black") +
+    geom_smooth(method='lm',color="red")+ 
+    coord_cartesian(ylim=c(2, 12))
 ```
 
